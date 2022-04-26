@@ -21,6 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from platform import node
 from types import DynamicClassAttribute
 import canopen
 from can import CanError
@@ -694,13 +695,6 @@ class SEVCON:
             node.select_fault(node, fault)
             fault_id=node.get_fault_id(node)
             print("Your fault ID is 0x{:04x}".format(fault_id))
-    
-    def apples():
-        network = create_network()
-        node, connected = create_node(network,1)
-        if connected:
-            node.get_fault(node)
-        return
 
 def main():
     state = StateDictionary['INIT']
@@ -714,7 +708,7 @@ def main():
             state = StateDictionary['CHECK_ERRORS']
 
         if state == StateDictionary['CHECK_ERRORS']:
-            fault_id = inverter.get_fault()
+            fault_id = inverter.get_fault_id()
             if fault_id is None:
                 state = StateDictionary['CHECK_STATE']
 
@@ -723,7 +717,7 @@ def main():
                 fault_id = str(fault_id)
                 print(fault_id)
                 
-                client.publish("viena/fault",fault_id,2)
+                #client.publish("viena/fault",fault_id,2)
 
                 state = StateDictionary['HANDLE_ERROR']    
 
@@ -732,7 +726,7 @@ def main():
             ID = str(ID)
             inverter.print_state()
 
-            client.publish("viena/state",ID,2)
+            #client.publish("viena/state",ID,2)
 
             state = StateDictionary['CHECK_TORQUE']
 
@@ -741,7 +735,7 @@ def main():
             torque = str(torque)
             print(torque)
 
-            client.publish("viena/torque",torque,2)    
+            #client.publish("viena/torque",torque,2)    
             
             state = StateDictionary['CHECK_SPEED']
 
@@ -760,7 +754,6 @@ def main():
 
 if __name__ == '__main__':
     main()
-    apples()
     client.disconnect()
 
 
